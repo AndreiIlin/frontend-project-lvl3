@@ -6,19 +6,22 @@
     <title>Hexlet frontend project</title>
 </head>
 <body>
-    <section class="container-fluid bg-primary p-5">
+    <section class="container-fluid bg-dark p-5">
         <div class="row">
             <div class="col-8 text-white mx-auto">
                 <p class="display-3">RSS агрегатор</p>
                 <form action="" class="row">
                     <div class="col">
                         <label for="rss-input" class="visually-hidden">RSS</label>
-                        <input class="form-control" id="rss-input" name="url" placeholder="Ссылка RSS" autocomplete="off" required>
+                        <input class="form-control" id="rss-input" name="url" placeholder="Ссылка RSS" autocomplete="off"
+                               required>
                     </div>
-                    <div class="col">
+                    <div class="col-auto">
                         <button type="submit" class="btn btn-secondary mb-3">Добавить</button>
                     </div>
                 </form>
+                <p class="mt-2 mb-0 text-muted">Пример: https://ru.hexlet.io/lessons.rss</p>
+                <p class="feedback-message small text-danger"></p>
             </div>
         </div>
     </section>
