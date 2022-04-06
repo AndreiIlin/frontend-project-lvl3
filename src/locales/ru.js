@@ -6,5 +6,7 @@ export default {
       alreadyExistingRss: 'RSS уже существует',
     },
     success: 'RSS успешно загружен',
+    posts: 'Посты',
+    feeds: 'Фиды',
   },
 };
