@@ -1,9 +1,8 @@
 import { uniqueId } from 'lodash';
 
-export default (state, data, link) => {
+export default (state, data, link, i18nextInstance) => {
   if (data.querySelector('parsererror')) {
-    state.processState = 'haveNoValidRss';
-    return Promise.reject();
+    throw new Error(`${i18nextInstance.t('errors.haveNoValidRss')}`);
   }
   const feedName = data.querySelector('title').textContent;
   const feedDescription = data.querySelector('description').textContent;

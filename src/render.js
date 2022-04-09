@@ -1,4 +1,4 @@
-import { feedPattern, feedsAndPostsRender, postPattern } from './postsAndFeedsRender.js';
+import { feedPattern, renderFeedsAndPosts, postPattern } from './postsAndFeedsRender.js';
 
 const changeMessageFromErrorToSuccess = (elements) => {
   elements.feedbackMessage.classList.remove('text-danger');
@@ -12,13 +12,13 @@ const makeErrorOnInput = (elements) => {
   if (elements.feedbackMessage.classList.contains('text-success')) {
     changeMessageFromSuccessToError(elements);
   }
-  elements.urlInput.classList.add('is-invalid');
+  elements.input.classList.add('is-invalid');
   elements.submitButton.disabled = true;
 };
 export default (elements, state, i18nextInstance) => {
   switch (state.processState) {
     case 'filling':
-      elements.urlInput.classList.remove('is-invalid');
+      elements.input.classList.remove('is-invalid');
       elements.submitButton.disabled = false;
       break;
     case 'error':
@@ -27,21 +27,15 @@ export default (elements, state, i18nextInstance) => {
       break;
     case 'success':
       elements.form.reset();
-      elements.urlInput.focus();
+      elements.input.focus();
       changeMessageFromErrorToSuccess(elements);
       elements.feedbackMessage.textContent = i18nextInstance.t('success');
       break;
-    case 'alreadyExistError':
-      makeErrorOnInput(elements);
-      elements.feedbackMessage.textContent = i18nextInstance.t('errors.alreadyExistingRss');
+    case 'postsRender':
+      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, i18nextInstance));
       break;
-    case 'haveNoValidRss':
-      makeErrorOnInput(elements);
-      elements.feedbackMessage.textContent = i18nextInstance.t('errors.haveNoValidRss');
-      break;
-    case 'postsAndFeedsRender':
-      feedsAndPostsRender(elements, state, 'posts', i18nextInstance, postPattern(state));
-      feedsAndPostsRender(elements, state, 'feeds', i18nextInstance, feedPattern(state));
+    case 'feedsRender':
+      renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
       break;
     default:
       throw new Error(`unknown state process: ${state.processState}`);

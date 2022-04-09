@@ -1,10 +1,13 @@
-export const feedsAndPostsRender = (elements, state, key, i18nextInstance, pattern) => {
+export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, pattern) => {
   elements[key].innerHTML = '';
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
   const cardBody = document.createElement('div');
   cardBody.classList.add('card-body');
-  cardBody.innerHTML = `<h2 class="card-title h4">${i18nextInstance.t(`${key}`)}</h2>`;
+  const header = document.createElement('h2');
+  header.classList.add('card-title', 'h4');
+  header.textContent = i18nextInstance.t(`${key}`);
+  cardBody.append(header);
   card.append(cardBody);
   const list = document.createElement('ul');
   list.classList.add('list-group', 'border-0', 'rounded-0');
@@ -15,14 +18,26 @@ export const feedsAndPostsRender = (elements, state, key, i18nextInstance, patte
 export const feedPattern = (state) => state.feedsList.map((feed) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'border-0', 'border-end-0');
-  liEl.innerHTML = `<h3 class="h6 m-0">${feed.name}</h3>
-<p class="m-0 small text-black-50">${feed.description}</p>`;
+  const header = document.createElement('h3');
+  header.classList.add('h6', 'm-0');
+  header.textContent = feed.name;
+  const text = document.createElement('p');
+  text.classList.add('m-0', 'small', 'text-black-50');
+  text.textContent = feed.description;
+  liEl.append(header, text);
   return liEl;
 });
-export const postPattern = (state) => state.postsList.map((post) => {
+export const postPattern = (state, i18nextInstance) => state.postsList.map((post) => {
   const liEl = document.createElement('li');
-  liEl.classList.add('list-group-item', 'border-0', 'border-end-0', 'd-flex');
+  liEl.classList.add('list-group-item', 'border-0', 'border-end-0', 'd-flex', 'justify-content-between', 'align-items-start');
   liEl.dataset.id = post.id;
-  liEl.innerHTML = `<a href="${post.link}" class="fw-bold">${post.name}</a>`;
+  const anchor = document.createElement('a');
+  anchor.href = post.link;
+  anchor.classList.add('fw-bold');
+  anchor.textContent = post.name;
+  const button = document.createElement('button');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.textContent = i18nextInstance.t('feedButton');
+  liEl.append(anchor, button);
   return liEl;
 });
