@@ -11,6 +11,9 @@ import rssUpdate from './rssUpdate.js';
 export default () => {
   const i18nextInstance = i18next.createInstance();
   const elements = {
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    readMoreButton: document.querySelector('.read-more'),
     form: document.querySelector('form'),
     input: document.getElementById('rss-input'),
     submitButton: document.querySelector('button[type="submit"]'),

@@ -25,6 +25,7 @@ export default (state, data, link, i18nextInstance) => {
       link: postLink,
       id: postId,
       feedId,
+      status: 'new',
     });
   });
 };

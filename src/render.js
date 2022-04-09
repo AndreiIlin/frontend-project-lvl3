@@ -32,7 +32,7 @@ export default (elements, state, i18nextInstance) => {
       elements.feedbackMessage.textContent = i18nextInstance.t('success');
       break;
     case 'postsRender':
-      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, i18nextInstance));
+      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       break;
     case 'feedsRender':
       renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));

@@ -27,17 +27,28 @@ export const feedPattern = (state) => state.feedsList.map((feed) => {
   liEl.append(header, text);
   return liEl;
 });
-export const postPattern = (state, i18nextInstance) => state.postsList.map((post) => {
+export const postPattern = (state, elements, i18nextInstance) => state.postsList.map((post) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'border-0', 'border-end-0', 'd-flex', 'justify-content-between', 'align-items-start');
   liEl.dataset.id = post.id;
   const anchor = document.createElement('a');
   anchor.href = post.link;
-  anchor.classList.add('fw-bold');
+  anchor.className = post.status === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
   anchor.textContent = post.name;
   const button = document.createElement('button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal-window');
   button.textContent = i18nextInstance.t('feedButton');
+  button.addEventListener('click', () => {
+    post.status = 'read';
+    state.processState = 'postsRender';
+    elements.modalTitle.textContent = post.name;
+    elements.modalBody.textContent = post.description;
+  });
+  elements.readMoreButton.addEventListener('click', () => {
+    window.location.href = post.link;
+  });
   liEl.append(anchor, button);
   return liEl;
 });
