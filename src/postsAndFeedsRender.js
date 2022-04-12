@@ -36,18 +36,20 @@ export const postPattern = (state, elements, i18nextInstance) => state.postsList
   anchor.className = post.status === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
   anchor.textContent = post.name;
   const button = document.createElement('button');
-  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'modal-window-button');
   button.setAttribute('data-bs-toggle', 'modal');
   button.setAttribute('data-bs-target', '#modal-window');
   button.textContent = i18nextInstance.t('feedButton');
   button.addEventListener('click', () => {
     post.status = 'read';
     state.processState = 'postsRender';
-    elements.modalTitle.textContent = post.name;
-    elements.modalBody.textContent = post.description;
-  });
-  elements.readMoreButton.addEventListener('click', () => {
-    window.location.href = post.link;
+    state.modalWindow.name = post.name;
+    state.modalWindow.description = post.description;
+    state.processState = 'modalWindowRender';
+    elements.readMoreButton.dataset.link = post.link;
+    elements.readMoreButton.addEventListener('click', () => {
+      window.location.href = post.link;
+    });
   });
   liEl.append(anchor, button);
   return liEl;

@@ -2,17 +2,16 @@ import { uniqueId, differenceBy } from 'lodash';
 import loadRss from './loadRss.js';
 import parseRSS from './parserRSS.js';
 
-const rssUpdate = (state) => {
+const rssUpdate = (state, i18nextInstance) => {
   state.feedsList.forEach((feed) => {
     const { link } = feed;
     const { id } = feed;
-    const oldPosts = state.postsList.filter((post) => post.feedId === id);
-    console.log('old', oldPosts);
-    loadRss(link)
+    const existingPosts = state.postsList.filter((post) => post.feedId === id);
+    loadRss(link, i18nextInstance)
       .then((response) => parseRSS(response.data.contents))
       .then((parsedData) => {
         const posts = parsedData.querySelectorAll('item');
-        const postsData = [...posts].map((post) => {
+        const parsedPosts = [...posts].map((post) => {
           const postName = post.querySelector('title').textContent;
           const postDescription = post.querySelector('description').textContent;
           const postLink = post.querySelector('link').textContent;
@@ -23,11 +22,10 @@ const rssUpdate = (state) => {
             link: postLink,
             id: postId,
             feedId: id,
+            status: 'new',
           };
         });
-        console.log('all', postsData);
-        const newPosts = differenceBy(postsData, oldPosts, 'link');
-        console.log('new', newPosts);
+        const newPosts = differenceBy(parsedPosts, existingPosts, 'link');
         newPosts.forEach((newPost) => {
           state.postsList.unshift(newPost);
         });

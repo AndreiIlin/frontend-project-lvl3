@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/js/dist/modal.js';
+import 'bootstrap/dist/js/bootstrap.min.js';
 import runApp from './init.js';
 
 runApp();

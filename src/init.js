@@ -27,6 +27,11 @@ export default () => {
     feedsList: [],
     postsList: [],
     feedbackMessage: '',
+    modalWindow: {
+      name: '',
+      description: '',
+      link: '',
+    },
   }, () => {
     render(elements, state, i18nextInstance);
   });
@@ -42,13 +47,14 @@ export default () => {
         url: i18nextInstance.t('errors.invalidUrl'),
       },
       mixed: {
+        required: i18nextInstance.t('errors.emptyField'),
         notOneOf: i18nextInstance.t('errors.alreadyExistingRss'),
       },
     });
   });
   let timerId;
   const loop = () => {
-    rssUpdate(state);
+    rssUpdate(state, i18nextInstance);
     timerId = setTimeout(loop, 5000);
   };
   elements.input.addEventListener('input', (e) => {
@@ -60,10 +66,13 @@ export default () => {
     const formData = new FormData(elements.form);
     const link = formData.get('url').trim();
     const schema = yup.object().shape({
-      inputValue: yup.string().url().notOneOf(state.feedsList.map((feed) => feed.link)),
+      inputValue: yup.string().required().url().notOneOf(state.feedsList.map((feed) => feed.link)),
     });
     schema.validate(state)
-      .then(() => loadRss(link))
+      .then(() => {
+        state.processState = 'processing';
+      })
+      .then(() => loadRss(link, i18nextInstance))
       .then((response) => parseRSS(response.data.contents))
       .then((parsedData) => getPostsAndFeedsData(state, parsedData, link, i18nextInstance))
       .then(() => {
@@ -73,7 +82,7 @@ export default () => {
       })
       .then(() => {
         clearTimeout(timerId);
-        timerId = setTimeout(loop, 5000);
+        loop();
       })
       .catch((err) => {
         state.feedbackMessage = err.errors ? err.errors : err.message;

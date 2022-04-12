@@ -21,11 +21,15 @@ export default (elements, state, i18nextInstance) => {
       elements.input.classList.remove('is-invalid');
       elements.submitButton.disabled = false;
       break;
+    case 'processing':
+      elements.submitButton.disabled = true;
+      break;
     case 'error':
       makeErrorOnInput(elements);
       elements.feedbackMessage.textContent = state.feedbackMessage;
       break;
     case 'success':
+      elements.submitButton.disabled = false;
       elements.form.reset();
       elements.input.focus();
       changeMessageFromErrorToSuccess(elements);
@@ -36,6 +40,10 @@ export default (elements, state, i18nextInstance) => {
       break;
     case 'feedsRender':
       renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
+      break;
+    case 'modalWindowRender':
+      elements.modalTitle.textContent = state.modalWindow.name;
+      elements.modalBody.textContent = state.modalWindow.description;
       break;
     default:
       throw new Error(`unknown state process: ${state.processState}`);
