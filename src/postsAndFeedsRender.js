@@ -15,6 +15,7 @@ export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, patte
   card.append(list);
   elements[key].append(card);
 };
+
 export const feedPattern = (state) => state.feedsList.map((feed) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'border-0', 'border-end-0');
@@ -27,6 +28,7 @@ export const feedPattern = (state) => state.feedsList.map((feed) => {
   liEl.append(header, text);
   return liEl;
 });
+
 export const postPattern = (state, elements, i18nextInstance) => state.postsList.map((post) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'border-0', 'border-end-0', 'd-flex', 'justify-content-between', 'align-items-start');
@@ -45,11 +47,8 @@ export const postPattern = (state, elements, i18nextInstance) => state.postsList
     state.processState = 'postsRender';
     state.modalWindow.name = post.name;
     state.modalWindow.description = post.description;
+    state.modalWindow.link = post.link;
     state.processState = 'modalWindowRender';
-    elements.readMoreButton.dataset.link = post.link;
-    elements.readMoreButton.addEventListener('click', () => {
-      window.location.href = post.link;
-    });
   });
   liEl.append(anchor, button);
   return liEl;

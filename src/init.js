@@ -5,11 +5,12 @@ import render from './render.js';
 import ru from './locales/ru.js';
 import parseRSS from './parserRSS.js';
 import getPostsAndFeedsData from './postsAndFeedsDataParser.js';
-import loadRss from './loadRss.js';
-import rssUpdate from './rssUpdate.js';
+import loadRss from './rssLoader.js';
+import updatePosts from './postsUpdater.js';
 
 export default () => {
   const i18nextInstance = i18next.createInstance();
+
   const elements = {
     modalTitle: document.querySelector('.modal-title'),
     modalBody: document.querySelector('.modal-body'),
@@ -21,6 +22,7 @@ export default () => {
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
   };
+
   const state = onChange({
     processState: 'filling',
     inputValue: '',
@@ -35,6 +37,7 @@ export default () => {
   }, () => {
     render(elements, state, i18nextInstance);
   });
+
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
@@ -52,15 +55,18 @@ export default () => {
       },
     });
   });
+
   let timerId;
-  const loop = () => {
-    rssUpdate(state, i18nextInstance);
-    timerId = setTimeout(loop, 5000);
+  const startUpdate = () => {
+    updatePosts(state, i18nextInstance);
+    timerId = setTimeout(startUpdate, 5000);
   };
+
   elements.input.addEventListener('input', (e) => {
     state.inputValue = e.target.value;
     state.processState = 'filling';
   });
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(elements.form);
@@ -82,7 +88,7 @@ export default () => {
       })
       .then(() => {
         clearTimeout(timerId);
-        loop();
+        startUpdate();
       })
       .catch((err) => {
         state.feedbackMessage = err.errors ? err.errors : err.message;

@@ -1,31 +1,39 @@
 import { uniqueId } from 'lodash';
 
-export default (state, data, link, i18nextInstance) => {
-  if (data.querySelector('parsererror')) {
-    throw new Error(`${i18nextInstance.t('errors.haveNoValidRss')}`);
-  }
+const parseFeed = (data, link) => {
   const feedName = data.querySelector('title').textContent;
   const feedDescription = data.querySelector('description').textContent;
   const feedId = uniqueId();
-  state.feedsList.unshift({
+  return {
     name: feedName,
     description: feedDescription,
     id: feedId,
     link,
-  });
+  };
+};
+
+export const parsePost = (post, feedId) => {
+  const postName = post.querySelector('title').textContent;
+  const postDescription = post.querySelector('description').textContent;
+  const postLink = post.querySelector('link').textContent;
+  const postId = uniqueId();
+  return {
+    name: postName,
+    description: postDescription,
+    link: postLink,
+    id: postId,
+    feedId,
+    status: 'new',
+  };
+};
+
+export default (state, data, link, i18nextInstance) => {
+  if (data.querySelector('parsererror')) {
+    throw new Error(`${i18nextInstance.t('errors.haveNoValidRss')}`);
+  }
+  const parsedFeed = parseFeed(data, link);
+  state.feedsList.unshift(parsedFeed);
   const posts = data.querySelectorAll('item');
-  posts.forEach((post) => {
-    const postName = post.querySelector('title').textContent;
-    const postDescription = post.querySelector('description').textContent;
-    const postLink = post.querySelector('link').textContent;
-    const postId = uniqueId();
-    state.postsList.unshift({
-      name: postName,
-      description: postDescription,
-      link: postLink,
-      id: postId,
-      feedId,
-      status: 'new',
-    });
-  });
+  const parsedPosts = [...posts].map((post) => parsePost(post, parsedFeed.id));
+  state.postsList.unshift(...parsedPosts);
 };

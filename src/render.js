@@ -4,10 +4,12 @@ const changeMessageFromErrorToSuccess = (elements) => {
   elements.feedbackMessage.classList.remove('text-danger');
   elements.feedbackMessage.classList.add('text-success');
 };
+
 const changeMessageFromSuccessToError = (elements) => {
   elements.feedbackMessage.classList.remove('text-success');
   elements.feedbackMessage.classList.add('text-danger');
 };
+
 const makeErrorOnInput = (elements) => {
   if (elements.feedbackMessage.classList.contains('text-success')) {
     changeMessageFromSuccessToError(elements);
@@ -15,6 +17,7 @@ const makeErrorOnInput = (elements) => {
   elements.input.classList.add('is-invalid');
   elements.submitButton.disabled = true;
 };
+
 export default (elements, state, i18nextInstance) => {
   switch (state.processState) {
     case 'filling':
@@ -44,6 +47,7 @@ export default (elements, state, i18nextInstance) => {
     case 'modalWindowRender':
       elements.modalTitle.textContent = state.modalWindow.name;
       elements.modalBody.textContent = state.modalWindow.description;
+      elements.readMoreButton.href = state.modalWindow.link;
       break;
     default:
       throw new Error(`unknown state process: ${state.processState}`);
