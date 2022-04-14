@@ -1,4 +1,4 @@
-import { differenceBy } from 'lodash';
+import _ from 'lodash';
 import loadRss from './rssLoader.js';
 import parseRSS from './parserRSS.js';
 import { parsePost } from './postsAndFeedsDataParser.js';
@@ -13,7 +13,7 @@ export default (state, i18nextInstance) => {
       .then((parsedData) => {
         const posts = parsedData.querySelectorAll('item');
         const parsedPosts = [...posts].map((post) => parsePost(post, id));
-        const newPosts = differenceBy(parsedPosts, existingPosts, 'link');
+        const newPosts = _.differenceBy(parsedPosts, existingPosts, 'link');
         state.postsList.unshift(...newPosts);
       })
       .then(() => {

@@ -1,9 +1,9 @@
-import { uniqueId } from 'lodash';
+import _ from 'lodash';
 
 const parseFeed = (data, link) => {
   const feedName = data.querySelector('title').textContent;
   const feedDescription = data.querySelector('description').textContent;
-  const feedId = uniqueId();
+  const feedId = _.uniqueId();
   return {
     name: feedName,
     description: feedDescription,
@@ -16,7 +16,7 @@ export const parsePost = (post, feedId) => {
   const postName = post.querySelector('title').textContent;
   const postDescription = post.querySelector('description').textContent;
   const postLink = post.querySelector('link').textContent;
-  const postId = uniqueId();
+  const postId = _.uniqueId();
   return {
     name: postName,
     description: postDescription,
