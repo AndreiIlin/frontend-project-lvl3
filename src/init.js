@@ -77,7 +77,6 @@ export default () => {
     });
     schema.validate(state)
       .then(() => {
-        state.inputValue = '';
         state.processState = 'processing';
       })
       .then(() => loadRss(link, i18nextInstance))

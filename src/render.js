@@ -26,13 +26,16 @@ export default (elements, state, i18nextInstance) => {
       break;
     case 'processing':
       elements.submitButton.disabled = true;
+      elements.input.disabled = true;
       break;
     case 'error':
       makeErrorOnInput(elements);
+      elements.input.disabled = false;
       elements.feedbackMessage.textContent = state.feedbackMessage;
       break;
     case 'success':
       elements.submitButton.disabled = false;
+      elements.input.disabled = false;
       elements.form.reset();
       elements.input.focus();
       changeMessageFromErrorToSuccess(elements);
