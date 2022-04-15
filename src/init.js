@@ -71,6 +71,7 @@ export default () => {
     e.preventDefault();
     const formData = new FormData(elements.form);
     const link = formData.get('url').trim();
+    console.log(link);
     const schema = yup.object().shape({
       inputValue: yup.string().required().url().notOneOf(state.feedsList.map((feed) => feed.link)),
     });
