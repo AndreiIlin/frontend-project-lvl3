@@ -10,6 +10,7 @@ import updatePosts from './postsUpdater.js';
 
 export default () => {
   const i18nextInstance = i18next.createInstance();
+
   const elements = {
     modalTitle: document.querySelector('.modal-title'),
     modalBody: document.querySelector('.modal-body'),
@@ -21,6 +22,7 @@ export default () => {
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
   };
+
   const state = onChange({
     processState: 'filling',
     inputValue: '',
@@ -35,11 +37,7 @@ export default () => {
   }, () => {
     render(elements, state, i18nextInstance);
   });
-  let timerId;
-  const startUpdate = () => {
-    updatePosts(state, i18nextInstance);
-    timerId = setTimeout(startUpdate, 5000);
-  };
+
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
@@ -56,38 +54,45 @@ export default () => {
         notOneOf: i18nextInstance.t('errors.alreadyExistingRss'),
       },
     });
-  }).then(() => {
-    elements.input.addEventListener('input', (e) => {
-      state.inputValue = e.target.value;
-      state.processState = 'filling';
+  });
+
+  let timerId;
+  const startUpdate = () => {
+    updatePosts(state, i18nextInstance);
+    timerId = setTimeout(startUpdate, 5000);
+  };
+
+  elements.input.addEventListener('input', (e) => {
+    state.inputValue = e.target.value;
+    state.processState = 'filling';
+  });
+
+  elements.form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(elements.form);
+    const link = formData.get('url').trim();
+    const schema = yup.object().shape({
+      inputValue: yup.string().required().url().notOneOf(state.feedsList.map((feed) => feed.link)),
     });
-    elements.form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const formData = new FormData(elements.form);
-      const link = formData.get('url').trim();
-      const schema = yup.object().shape({
-        inputValue: yup.string().required().url().notOneOf(state.feedsList.map((f) => f.link)),
+    schema.validate(state)
+      .then(() => {
+        state.processState = 'processing';
+      })
+      .then(() => loadRss(link, i18nextInstance))
+      .then((response) => parseRSS(response.data.contents))
+      .then((parsedData) => getPostsAndFeedsData(state, parsedData, link, i18nextInstance))
+      .then(() => {
+        state.processState = 'success';
+        state.processState = 'postsRender';
+        state.processState = 'feedsRender';
+      })
+      .then(() => {
+        clearTimeout(timerId);
+        startUpdate();
+      })
+      .catch((err) => {
+        state.feedbackMessage = err.errors ? err.errors : err.message;
+        state.processState = 'error';
       });
-      schema.validate(state)
-        .then(() => {
-          state.processState = 'processing';
-        })
-        .then(() => loadRss(link, i18nextInstance))
-        .then((response) => parseRSS(response.data.contents))
-        .then((parsedData) => getPostsAndFeedsData(state, parsedData, link, i18nextInstance))
-        .then(() => {
-          state.processState = 'success';
-          state.processState = 'postsRender';
-          state.processState = 'feedsRender';
-        })
-        .then(() => {
-          clearTimeout(timerId);
-          startUpdate();
-        })
-        .catch((err) => {
-          state.feedbackMessage = err.errors ? err.errors : err.message;
-          state.processState = 'error';
-        });
-    });
   });
 };
