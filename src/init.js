@@ -83,6 +83,7 @@ export default () => {
       .then((response) => parseRSS(response.data.contents))
       .then((parsedData) => getPostsAndFeedsData(state, parsedData, link, i18nextInstance))
       .then(() => {
+        state.inputValue = '';
         state.processState = 'success';
         state.processState = 'postsRender';
         state.processState = 'feedsRender';
