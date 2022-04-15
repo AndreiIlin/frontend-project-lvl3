@@ -15,7 +15,6 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.html',
-      inject: 'body',
     }),
   ],
   module: {
