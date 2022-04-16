@@ -72,14 +72,14 @@ export default () => {
     const formData = new FormData(elements.form);
     const link = formData.get('url').trim();
     state.processState = 'processing';
-    console.log(link);
     const schema = yup.object().shape({
       inputValue: yup.string().required().url().notOneOf(state.feedsList.map((feed) => feed.link)),
     });
     schema.validate(state)
       .then(() => loadRss(link, i18nextInstance))
       .then((response) => parseRSS(response.data.contents))
-      .then((parsedData) => getPostsAndFeedsData(state, parsedData, link, i18nextInstance))
+      .then((parsedRss) => getPostsAndFeedsData(state, parsedRss, link, i18nextInstance))
+      .then((parsedData) => Promise.resolve(parsedData))
       .then(() => {
         state.processState = 'postsRender';
         state.processState = 'feedsRender';
