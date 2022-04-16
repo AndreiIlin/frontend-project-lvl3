@@ -31,6 +31,7 @@ export default (elements, state, i18nextInstance) => {
     case 'error':
       makeErrorOnInput(elements);
       elements.input.readOnly = false;
+      elements.submitButton.disabled = false;
       elements.feedbackMessage.textContent = state.feedbackMessage;
       break;
     case 'success':
