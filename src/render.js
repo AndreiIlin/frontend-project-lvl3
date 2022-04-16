@@ -32,10 +32,12 @@ export default (elements, state, i18nextInstance) => {
       elements.submitButton.disabled = false;
       elements.feedbackMessage.textContent = state.feedbackMessage;
       break;
-    case 'success':
-      elements.input.readOnly = false;
+    case 'inputClearing':
       elements.input.value = '';
+      elements.input.readOnly = false;
       elements.input.focus();
+      break;
+    case 'success':
       elements.submitButton.disabled = false;
       changeFeedbackClassToSuccess(elements);
       elements.feedbackMessage.textContent = i18nextInstance.t('success');

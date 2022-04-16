@@ -83,6 +83,7 @@ export default () => {
       .then(() => {
         state.processState = 'postsRender';
         state.processState = 'feedsRender';
+        state.processState = 'inputClearing';
       })
       .then(() => {
         state.processState = 'success';
