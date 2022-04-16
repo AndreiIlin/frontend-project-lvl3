@@ -34,10 +34,10 @@ export default (elements, state, i18nextInstance) => {
       elements.feedbackMessage.textContent = state.feedbackMessage;
       break;
     case 'success':
-      elements.submitButton.disabled = false;
-      elements.input.disabled = false;
       elements.form.reset();
       elements.input.focus();
+      elements.submitButton.disabled = false;
+      elements.input.disabled = false;
       changeMessageFromErrorToSuccess(elements);
       elements.feedbackMessage.textContent = i18nextInstance.t('success');
       break;
