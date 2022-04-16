@@ -1,28 +1,26 @@
 import { feedPattern, renderFeedsAndPosts, postPattern } from './postsAndFeedsRender.js';
 
-const changeMessageFromErrorToSuccess = (elements) => {
+const changeFeedbackClassToSuccess = (elements) => {
   elements.feedbackMessage.classList.remove('text-danger');
   elements.feedbackMessage.classList.add('text-success');
 };
 
-const changeMessageFromSuccessToError = (elements) => {
+const changeFeedbackClassToError = (elements) => {
   elements.feedbackMessage.classList.remove('text-success');
   elements.feedbackMessage.classList.add('text-danger');
 };
 
 const makeErrorOnInput = (elements) => {
   if (elements.feedbackMessage.classList.contains('text-success')) {
-    changeMessageFromSuccessToError(elements);
+    changeFeedbackClassToError(elements);
   }
   elements.input.classList.add('is-invalid');
-  elements.submitButton.disabled = true;
 };
 
 export default (elements, state, i18nextInstance) => {
   switch (state.processState) {
     case 'filling':
       elements.input.classList.remove('is-invalid');
-      elements.submitButton.disabled = false;
       break;
     case 'processing':
       elements.submitButton.disabled = true;
@@ -35,11 +33,11 @@ export default (elements, state, i18nextInstance) => {
       elements.feedbackMessage.textContent = state.feedbackMessage;
       break;
     case 'success':
-      elements.submitButton.disabled = false;
       elements.input.readOnly = false;
       elements.input.value = '';
       elements.input.focus();
-      changeMessageFromErrorToSuccess(elements);
+      elements.submitButton.disabled = false;
+      changeFeedbackClassToSuccess(elements);
       elements.feedbackMessage.textContent = i18nextInstance.t('success');
       break;
     case 'postsRender':
