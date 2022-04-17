@@ -79,12 +79,12 @@ export default () => {
       .then(() => loadRss(link, i18nextInstance))
       .then((response) => parseRSS(response.data.contents))
       .then((parsedRss) => getPostsAndFeedsData(state, parsedRss, link, i18nextInstance))
-      .then((parsedData) => Promise.resolve(parsedData))
       .then(() => {
         state.processState = 'postsRender';
         state.processState = 'feedsRender';
         state.processState = 'inputClearing';
       })
+      .then((postsRenderData, feedsRenderData) => Promise.all([postsRenderData, feedsRenderData]))
       .then(() => {
         state.processState = 'success';
       })

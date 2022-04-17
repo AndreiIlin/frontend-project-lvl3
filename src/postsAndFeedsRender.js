@@ -1,4 +1,4 @@
-export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, pattern) => {
+export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, pattern) => new Promise(() => {
   elements[key].innerHTML = '';
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -14,7 +14,7 @@ export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, patte
   list.append(...pattern);
   card.append(list);
   elements[key].append(card);
-};
+});
 
 export const feedPattern = (state) => state.feedsList.map((feed) => {
   const liEl = document.createElement('li');
