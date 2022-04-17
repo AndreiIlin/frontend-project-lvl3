@@ -84,13 +84,12 @@ export default () => {
         state.processState = 'feedsRender';
         state.processState = 'inputClearing';
       })
-      .then((postsRenderData, feedsRenderData) => Promise.all([postsRenderData, feedsRenderData]))
       .then(() => {
         state.processState = 'success';
       })
       .then(() => {
         clearTimeout(timerId);
-        startUpdate();
+        setTimeout(startUpdate, 5000);
       })
       .catch((err) => {
         state.feedbackMessage = err.errors ? err.errors : err.message;
