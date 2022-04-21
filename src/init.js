@@ -4,12 +4,13 @@ import i18next from 'i18next';
 import render from './render.js';
 import ru from './locales/ru.js';
 import parseRSS from './parserRSS.js';
-import getPostsAndFeedsData from './postsAndFeedsDataParser.js';
+import importDataToState from './stateDataImporter.js';
 import loadRss from './rssLoader.js';
 import updatePosts from './postsUpdater.js';
 
 export default () => {
   const i18nextInstance = i18next.createInstance();
+
 
   const elements = {
     modalTitle: document.querySelector('.modal-title'),
@@ -25,15 +26,19 @@ export default () => {
 
   const state = onChange({
     processState: 'filling',
-    inputValue: '',
     feedsList: [],
     postsList: [],
-    feedbackMessage: '',
-    modalWindow: {
-      name: '',
-      description: '',
-      link: '',
+    uiState: {
+      inputValue: '',
+      posts: [],
+      modalWindow: {
+        name: '',
+        description: '',
+        link: '',
+      },
+      feedbackMessage: '',
     },
+
   }, () => {
     render(elements, state, i18nextInstance);
   });
@@ -58,12 +63,12 @@ export default () => {
 
   let timerId;
   const startUpdate = () => {
-    updatePosts(state, i18nextInstance);
+    updatePosts(state);
     timerId = setTimeout(startUpdate, 5000);
   };
 
   elements.input.addEventListener('input', (e) => {
-    state.inputValue = e.target.value;
+    state.uiState.inputValue = e.target.value;
     state.processState = 'filling';
   });
 
@@ -75,10 +80,10 @@ export default () => {
     const schema = yup.object().shape({
       inputValue: yup.string().required().url().notOneOf(state.feedsList.map((feed) => feed.link)),
     });
-    schema.validate(state)
-      .then(() => loadRss(link, i18nextInstance))
+    schema.validate(state.uiState)
+      .then(() => loadRss(link))
       .then((response) => parseRSS(response.data.contents))
-      .then((parsedRss) => getPostsAndFeedsData(state, parsedRss, link, i18nextInstance))
+      .then((parsedRss) => importDataToState(state, parsedRss, link))
       .then(() => {
         state.processState = 'postsRender';
         state.processState = 'feedsRender';
@@ -88,12 +93,12 @@ export default () => {
         state.processState = 'success';
       })
       .then(() => {
-        clearTimeout(timerId);
-        setTimeout(startUpdate, 5000);
+        setTimeout(startUpdate, 10000, state)
       })
       .catch((err) => {
-        state.feedbackMessage = err.errors ? err.errors : err.message;
+        state.uiState.feedbackMessage = err.errors ? err.errors : err.message;
         state.processState = 'error';
       });
   });
+  // startUpdate();
 };

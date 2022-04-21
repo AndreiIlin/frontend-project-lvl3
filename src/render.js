@@ -17,6 +17,17 @@ const makeErrorOnInput = (elements) => {
   elements.input.classList.add('is-invalid');
 };
 
+const getErrorText = (message, i18nextInstance) => {
+  switch (message) {
+    case 'not valid RSS':
+      return i18nextInstance.t('errors.haveNoValidRss');
+    case 'network problems':
+      return i18nextInstance.t('errors.networkError');
+    default:
+      return message;
+  }
+};
+
 export default (elements, state, i18nextInstance) => {
   switch (state.processState) {
     case 'filling':
@@ -30,7 +41,7 @@ export default (elements, state, i18nextInstance) => {
       makeErrorOnInput(elements);
       elements.input.readOnly = false;
       elements.submitButton.disabled = false;
-      elements.feedbackMessage.textContent = state.feedbackMessage;
+      elements.feedbackMessage.textContent = getErrorText(state.uiState.feedbackMessage, i18nextInstance);
       break;
     case 'inputClearing':
       elements.input.value = '';
@@ -49,9 +60,9 @@ export default (elements, state, i18nextInstance) => {
       renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
       break;
     case 'modalWindowRender':
-      elements.modalTitle.textContent = state.modalWindow.name;
-      elements.modalBody.textContent = state.modalWindow.description;
-      elements.readMoreButton.href = state.modalWindow.link;
+      elements.modalTitle.textContent = state.uiState.modalWindow.name;
+      elements.modalBody.textContent = state.uiState.modalWindow.description;
+      elements.readMoreButton.href = state.uiState.modalWindow.link;
       break;
     default:
       throw new Error(`unknown state process: ${state.processState}`);

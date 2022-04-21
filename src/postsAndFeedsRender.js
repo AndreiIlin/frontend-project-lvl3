@@ -1,3 +1,10 @@
+const findPostById = (post, state) => {
+  const { id } = post;
+  const p = state.uiState.posts.find((post) => post.id === id);
+  // console.log(p);
+  return p;
+};
+
 export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, pattern) => {
   elements[key].innerHTML = '';
   const card = document.createElement('div');
@@ -35,7 +42,8 @@ export const postPattern = (state, elements, i18nextInstance) => state.postsList
   liEl.dataset.id = post.id;
   const anchor = document.createElement('a');
   anchor.href = post.link;
-  anchor.className = post.status === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
+  console.log(state.uiState.posts);
+  anchor.className = findPostById(post, state).postStatus === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
   anchor.textContent = post.name;
   const button = document.createElement('button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'modal-window-button');
@@ -43,11 +51,11 @@ export const postPattern = (state, elements, i18nextInstance) => state.postsList
   button.setAttribute('data-bs-target', '#modal-window');
   button.textContent = i18nextInstance.t('feedButton');
   button.addEventListener('click', () => {
-    post.status = 'read';
+    findPostById(post, state).postStatus = 'read';
     state.processState = 'postsRender';
-    state.modalWindow.name = post.name;
-    state.modalWindow.description = post.description;
-    state.modalWindow.link = post.link;
+    state.uiState.modalWindow.name = post.name;
+    state.uiState.modalWindow.description = post.description;
+    state.uiState.modalWindow.link = post.link;
     state.processState = 'modalWindowRender';
   });
   liEl.append(anchor, button);
