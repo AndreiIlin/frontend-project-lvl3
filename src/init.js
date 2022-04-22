@@ -11,7 +11,6 @@ import updatePosts from './postsUpdater.js';
 export default () => {
   const i18nextInstance = i18next.createInstance();
 
-
   const elements = {
     modalTitle: document.querySelector('.modal-title'),
     modalBody: document.querySelector('.modal-body'),
@@ -19,7 +18,7 @@ export default () => {
     form: document.querySelector('form'),
     input: document.getElementById('rss-input'),
     submitButton: document.querySelector('button[type="submit"]'),
-    feedbackMessage: document.querySelector('.feedback-message'),
+    feedback: document.querySelector('.feedback-message'),
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
   };
@@ -38,7 +37,6 @@ export default () => {
       },
       feedbackMessage: '',
     },
-
   }, () => {
     render(elements, state, i18nextInstance);
   });
@@ -61,11 +59,12 @@ export default () => {
     });
   });
 
-  let timerId;
   const startUpdate = () => {
     updatePosts(state);
-    timerId = setTimeout(startUpdate, 5000);
+    setTimeout(startUpdate, 5000);
   };
+
+  startUpdate();
 
   elements.input.addEventListener('input', (e) => {
     state.uiState.inputValue = e.target.value;
@@ -88,17 +87,11 @@ export default () => {
         state.processState = 'postsRender';
         state.processState = 'feedsRender';
         state.processState = 'inputClearing';
-      })
-      .then(() => {
         state.processState = 'success';
-      })
-      .then(() => {
-        setTimeout(startUpdate, 10000, state)
       })
       .catch((err) => {
         state.uiState.feedbackMessage = err.errors ? err.errors : err.message;
         state.processState = 'error';
       });
   });
-  // startUpdate();
 };

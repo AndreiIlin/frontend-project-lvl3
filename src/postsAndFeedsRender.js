@@ -1,10 +1,3 @@
-const findPostById = (post, state) => {
-  const { id } = post;
-  const p = state.uiState.posts.find((post) => post.id === id);
-  // console.log(p);
-  return p;
-};
-
 export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, pattern) => {
   elements[key].innerHTML = '';
   const card = document.createElement('div');
@@ -42,8 +35,8 @@ export const postPattern = (state, elements, i18nextInstance) => state.postsList
   liEl.dataset.id = post.id;
   const anchor = document.createElement('a');
   anchor.href = post.link;
-  console.log(state.uiState.posts);
-  anchor.className = findPostById(post, state).postStatus === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
+  const currentPostInUiState = state.uiState.posts.find((uiPost) => uiPost.id === post.id);
+  anchor.className = currentPostInUiState.postStatus === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
   anchor.textContent = post.name;
   const button = document.createElement('button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'modal-window-button');
@@ -51,7 +44,7 @@ export const postPattern = (state, elements, i18nextInstance) => state.postsList
   button.setAttribute('data-bs-target', '#modal-window');
   button.textContent = i18nextInstance.t('feedButton');
   button.addEventListener('click', () => {
-    findPostById(post, state).postStatus = 'read';
+    currentPostInUiState.postStatus = 'read';
     state.processState = 'postsRender';
     state.uiState.modalWindow.name = post.name;
     state.uiState.modalWindow.description = post.description;

@@ -6,6 +6,7 @@ const parseFeed = (data) => {
     description: feedDescription,
   };
 };
+
 export const parsePost = (data) => {
   const postName = data.querySelector('title').textContent;
   const postDescription = data.querySelector('description').textContent;
@@ -16,9 +17,10 @@ export const parsePost = (data) => {
     link: postLink,
   };
 };
+
 export default (data) => {
   const parser = new DOMParser();
-  const parsedXml =  parser.parseFromString(data, 'application/xml');
+  const parsedXml = parser.parseFromString(data, 'application/xml');
   if (parsedXml.querySelector('parsererror')) {
     throw new Error('not valid RSS');
   }
