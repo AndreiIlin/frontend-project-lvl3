@@ -81,7 +81,7 @@ export default () => {
     });
     schema.validate(state.uiState)
       .then(() => loadRss(link))
-      .then((response) => parseRSS(response.data.contents))
+      .then((response) => parseRSS(response.data.contents, state))
       .then((parsedRss) => {
         importDataToState(state, parsedRss, link);
         state.processState = 'postsAndFeedsRender';

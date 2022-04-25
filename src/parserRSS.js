@@ -18,7 +18,7 @@ export const parsePost = (data) => {
   };
 };
 
-export default (data) => {
+export default (data, state) => {
   const parser = new DOMParser();
   const parsedXml = parser.parseFromString(data, 'application/xml');
   if (parsedXml.querySelector('parsererror')) {
@@ -27,5 +27,6 @@ export default (data) => {
   const parsedFeed = parseFeed(parsedXml);
   const posts = parsedXml.querySelectorAll('item');
   const parsedPosts = [...posts].map((post) => parsePost(post));
+  state.processState = 'downloadSuccess';
   return [parsedFeed, parsedPosts];
 };

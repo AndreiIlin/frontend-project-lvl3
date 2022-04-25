@@ -43,14 +43,16 @@ export default (elements, state, i18nextInstance) => {
       elements.submitButton.disabled = false;
       elements.feedback.textContent = getErrorText(state.uiState.feedbackMessage, i18nextInstance);
       break;
+    case 'downloadSuccess':
+      elements.input.value = '';
+      elements.input.readOnly = false;
+      elements.input.focus();
+      elements.submitButton.disabled = false;
+      break;
     case 'postsRender':
       renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       break;
     case 'postsAndFeedsRender':
-      elements.input.readOnly = false;
-      elements.input.value = '';
-      elements.input.focus();
-      elements.submitButton.disabled = false;
       renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
       renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       changeFeedbackClassToSuccess(elements);
