@@ -47,12 +47,12 @@ export default (elements, state, i18nextInstance) => {
       renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       break;
     case 'postsAndFeedsRender':
-      renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
-      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
-      elements.input.value = '';
       elements.input.readOnly = false;
+      elements.input.value = '';
       elements.input.focus();
       elements.submitButton.disabled = false;
+      renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
+      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       changeFeedbackClassToSuccess(elements);
       elements.feedback.textContent = i18nextInstance.t('success');
       break;
