@@ -82,12 +82,9 @@ export default () => {
     schema.validate(state.uiState)
       .then(() => loadRss(link))
       .then((response) => parseRSS(response.data.contents))
-      .then((parsedRss) => importDataToState(state, parsedRss, link))
-      .then(() => {
-        state.processState = 'postsRender';
-        state.processState = 'feedsRender';
-        state.processState = 'inputClearing';
-        state.processState = 'success';
+      .then((parsedRss) => {
+        importDataToState(state, parsedRss, link);
+        state.processState = 'postsAndFeedsRender';
       })
       .catch((err) => {
         state.uiState.feedbackMessage = err.errors ? err.errors : err.message;

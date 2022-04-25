@@ -43,21 +43,18 @@ export default (elements, state, i18nextInstance) => {
       elements.submitButton.disabled = false;
       elements.feedback.textContent = getErrorText(state.uiState.feedbackMessage, i18nextInstance);
       break;
-    case 'inputClearing':
-      elements.input.value = '';
-      elements.input.readOnly = false;
-      elements.input.focus();
-      break;
-    case 'success':
-      elements.submitButton.disabled = false;
-      changeFeedbackClassToSuccess(elements);
-      elements.feedback.textContent = i18nextInstance.t('success');
-      break;
     case 'postsRender':
       renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       break;
-    case 'feedsRender':
+    case 'postsAndFeedsRender':
       renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
+      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
+      elements.input.value = '';
+      elements.input.readOnly = false;
+      elements.input.focus();
+      elements.submitButton.disabled = false;
+      changeFeedbackClassToSuccess(elements);
+      elements.feedback.textContent = i18nextInstance.t('success');
       break;
     case 'modalWindowRender':
       elements.modalTitle.textContent = state.uiState.modalWindow.name;
