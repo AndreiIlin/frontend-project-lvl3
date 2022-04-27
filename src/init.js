@@ -9,7 +9,7 @@ import loadRss from './rssLoader.js';
 import updatePosts from './postsUpdater.js';
 
 export default () => {
-  const i18nextInstance = i18next.createInstance();
+  const i18n = i18next.createInstance();
 
   const elements = {
     modalTitle: document.querySelector('.modal-title'),
@@ -30,18 +30,12 @@ export default () => {
     uiState: {
       inputValue: '',
       posts: [],
-      modalWindow: {
-        name: '',
-        description: '',
-        link: '',
-      },
-      feedbackMessage: '',
+      modalWindow: null,
+      errorMessage: '',
     },
-  }, () => {
-    render(elements, state, i18nextInstance);
-  });
+  }, (path, value) => render(elements, state, i18n, path, value));
 
-  i18nextInstance.init({
+  i18n.init({
     lng: 'ru',
     debug: false,
     resources: {
@@ -50,11 +44,11 @@ export default () => {
   }).then(() => {
     yup.setLocale({
       string: {
-        url: i18nextInstance.t('errors.invalidUrl'),
+        url: i18n.t('errors.invalidUrl'),
       },
       mixed: {
-        required: i18nextInstance.t('errors.emptyField'),
-        notOneOf: i18nextInstance.t('errors.alreadyExistingRss'),
+        required: i18n.t('errors.emptyField'),
+        notOneOf: i18n.t('errors.alreadyExistingRss'),
       },
     });
   });
@@ -66,16 +60,15 @@ export default () => {
 
   startUpdate();
 
-  elements.input.addEventListener('input', (e) => {
-    state.uiState.inputValue = e.target.value;
-    state.processState = 'filling';
+  elements.input.addEventListener('input', ({ target }) => {
+    state.uiState.inputValue = target.value;
   });
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
+    state.processState = 'processing';
     const formData = new FormData(elements.form);
     const link = formData.get('url').trim();
-    state.processState = 'processing';
     const schema = yup.object().shape({
       inputValue: yup.string().required().url().notOneOf(state.feedsList.map((feed) => feed.link)),
     });
@@ -84,11 +77,10 @@ export default () => {
       .then((response) => parseRSS(response.data.contents, state))
       .then((parsedRss) => {
         importDataToState(state, parsedRss, link);
-        state.processState = 'postsAndFeedsRender';
+        state.processState = 'finished';
       })
       .catch((err) => {
-        state.uiState.feedbackMessage = err.errors ? err.errors : err.message;
-        state.processState = 'error';
+        state.uiState.errorMessage = err.errors ? err.errors : err.message;
       });
   });
 };

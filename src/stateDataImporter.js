@@ -22,7 +22,7 @@ export default (state, data, link) => {
   const feedToState = handleFeedData(parsedFeed, link);
   const postsToState = handlePostsData(parsedPosts, feedToState);
   const postsToUiState = handlePostsForUi(postsToState);
-  state.feedsList.unshift(feedToState);
   state.postsList.unshift(...postsToState);
+  state.feedsList.unshift(feedToState);
   state.uiState.posts.unshift(...postsToUiState);
 };

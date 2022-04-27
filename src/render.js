@@ -17,53 +17,62 @@ const makeErrorOnInput = (elements) => {
   elements.input.classList.add('is-invalid');
 };
 
-const getErrorText = (message, i18nextInstance) => {
+const getErrorText = (message, i18n) => {
   switch (message) {
     case 'not valid RSS':
-      return i18nextInstance.t('errors.haveNoValidRss');
+      return i18n.t('errors.haveNoValidRss');
     case 'network problems':
-      return i18nextInstance.t('errors.networkError');
+      return i18n.t('errors.networkError');
     default:
       return message;
   }
 };
 
-export default (elements, state, i18nextInstance) => {
-  switch (state.processState) {
-    case 'filling':
-      elements.input.classList.remove('is-invalid');
-      break;
+const processStateHandle = (state, elements, i18n) => {
+  switch (state) {
     case 'processing':
       elements.submitButton.disabled = true;
       elements.input.readOnly = true;
       break;
-    case 'error':
-      makeErrorOnInput(elements);
-      elements.input.readOnly = false;
-      elements.submitButton.disabled = false;
-      elements.feedback.textContent = getErrorText(state.uiState.feedbackMessage, i18nextInstance);
-      break;
-    case 'downloadSuccess':
+    case 'finished':
       elements.input.value = '';
       elements.input.readOnly = false;
       elements.input.focus();
       elements.submitButton.disabled = false;
-      break;
-    case 'postsRender':
-      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
-      break;
-    case 'postsAndFeedsRender':
-      renderFeedsAndPosts(elements, state, 'feeds', i18nextInstance, feedPattern(state));
-      renderFeedsAndPosts(elements, state, 'posts', i18nextInstance, postPattern(state, elements, i18nextInstance));
       changeFeedbackClassToSuccess(elements);
-      elements.feedback.textContent = i18nextInstance.t('success');
-      break;
-    case 'modalWindowRender':
-      elements.modalTitle.textContent = state.uiState.modalWindow.name;
-      elements.modalBody.textContent = state.uiState.modalWindow.description;
-      elements.readMoreButton.href = state.uiState.modalWindow.link;
+      elements.feedback.textContent = i18n.t('success');
       break;
     default:
-      throw new Error(`unknown state process: ${state.processState}`);
+      throw new Error(`unknown state: ${state}`);
+  }
+};
+
+export default (elements, state, i18n, path, value) => {
+  switch (path) {
+    case 'processState':
+      processStateHandle(value, elements, i18n);
+      break;
+    case 'feedsList':
+      renderFeedsAndPosts(elements, 'feeds', i18n, feedPattern(state));
+      break;
+    case 'uiState.inputValue':
+      elements.input.classList.remove('is-invalid');
+      break;
+    case 'uiState.posts':
+      renderFeedsAndPosts(elements, 'posts', i18n, postPattern(state, elements, i18n, path, value));
+      break;
+    case 'uiState.modalWindow':
+      elements.modalTitle.textContent = value.name;
+      elements.modalBody.textContent = value.description;
+      elements.readMoreButton.href = value.link;
+      break;
+    case 'uiState.errorMessage':
+      makeErrorOnInput(elements);
+      elements.input.readOnly = false;
+      elements.submitButton.disabled = false;
+      elements.feedback.textContent = getErrorText(value, i18n);
+      break;
+    default:
+      break;
   }
 };

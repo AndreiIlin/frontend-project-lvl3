@@ -1,4 +1,12 @@
-export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, pattern) => {
+const readPost = (post, state) => {
+  const index = state.uiState.posts.indexOf(post);
+  state.uiState.posts.splice(index, 1, {
+    id: post.id,
+    postStatus: 'read',
+  });
+};
+
+export const renderFeedsAndPosts = (elements, key, i18n, pattern) => {
   elements[key].innerHTML = '';
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -6,7 +14,7 @@ export const renderFeedsAndPosts = (elements, state, key, i18nextInstance, patte
   cardBody.classList.add('card-body');
   const header = document.createElement('h2');
   header.classList.add('card-title', 'h4');
-  header.textContent = i18nextInstance.t(`${key}`);
+  header.textContent = i18n.t(`${key}`);
   cardBody.append(header);
   card.append(cardBody);
   const list = document.createElement('ul');
@@ -29,27 +37,33 @@ export const feedPattern = (state) => state.feedsList.map((feed) => {
   return liEl;
 });
 
-export const postPattern = (state, elements, i18nextInstance) => state.postsList.map((post) => {
+export const postPattern = (state, elements, i18n) => state.uiState.posts.map((uiPost) => {
+  const currentPostInState = state.postsList.find((post) => post.id === uiPost.id);
+  const {
+    name,
+    id,
+    link,
+    description,
+  } = currentPostInState;
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'border-0', 'border-end-0', 'd-flex', 'justify-content-between', 'align-items-start');
-  liEl.dataset.id = post.id;
+  liEl.dataset.id = id;
   const anchor = document.createElement('a');
-  anchor.href = post.link;
-  const currentPostInUiState = state.uiState.posts.find((uiPost) => uiPost.id === post.id);
-  anchor.className = currentPostInUiState.postStatus === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
-  anchor.textContent = post.name;
+  anchor.href = link;
+  anchor.className = uiPost.postStatus === 'new' ? 'fw-bold' : 'fw-normal link-secondary';
+  anchor.textContent = name;
   const button = document.createElement('button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'modal-window-button');
   button.setAttribute('data-bs-toggle', 'modal');
   button.setAttribute('data-bs-target', '#modal-window');
-  button.textContent = i18nextInstance.t('feedButton');
+  button.textContent = i18n.t('feedButton');
   button.addEventListener('click', () => {
-    currentPostInUiState.postStatus = 'read';
-    state.processState = 'postsRender';
-    state.uiState.modalWindow.name = post.name;
-    state.uiState.modalWindow.description = post.description;
-    state.uiState.modalWindow.link = post.link;
-    state.processState = 'modalWindowRender';
+    readPost(uiPost, state);
+    state.uiState.modalWindow = {
+      name,
+      description,
+      link,
+    };
   });
   liEl.append(anchor, button);
   return liEl;

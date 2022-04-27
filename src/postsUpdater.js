@@ -15,9 +15,8 @@ export default (state) => {
         const downloadedPosts = handlePostsData(parsedPosts, feed);
         const newPosts = _.differenceBy(downloadedPosts, postsInState, 'link');
         const newPostForUi = handlePostsForUi(newPosts);
-        state.uiState.posts.unshift(...newPostForUi);
         state.postsList.unshift(...newPosts);
-        state.processState = 'postsRender';
+        state.uiState.posts.unshift(...newPostForUi);
       });
   });
 };
