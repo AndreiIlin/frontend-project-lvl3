@@ -74,8 +74,8 @@ export default () => {
     });
     schema.validate(state.uiState)
       .then(() => loadRss(link))
-      .then((response) => parseRSS(response.data.contents, state))
-      .then((parsedRss) => {
+      .then((response) => {
+        const parsedRss = parseRSS(response.data.contents);
         importDataToState(state, parsedRss, link);
         state.processState = 'finished';
       })
